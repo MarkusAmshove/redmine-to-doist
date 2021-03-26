@@ -1,21 +1,35 @@
+import sys
+
+from config import Configuration
 from todoist.api import TodoistAPI
 import json
 
-TODOIST_PROJECT_NAME = 'Redmine'
-TODOIST_PROJECT_SECTION_NAME = 'Backlog'
-API_KEY = ''
 
 class Todoist:
 
-    def __init__(self, api_token, project_name, section_name, ignore_closed_todos=False):
-        self.api = TodoistAPI(api_token)
-        self.project_name = project_name
-        self.section_name = section_name
+    def __init__(self, config, ignore_closed_todos=False):
+        self.api = TodoistAPI(config.api_key)
+        self.project_name = config.project_name
+        self.section_name = config.new_section_name
         self.ignore_closed_todos = ignore_closed_todos
 
         self.api.sync()
         self.__init_project()
         self.__init_section()
+
+    def discover(self):
+        self.__discover_labels()
+        self.__discover_projects()
+
+    def __discover_labels(self):
+        print("Labels")
+        for label in self.api.labels.all():
+            print(f"  {label['id']}: \"{label['name']}\"")
+
+    def __discover_projects(self):
+        print("Projects")
+        for project in self.api.projects.all():
+            print(f"  {project['id']}: \"{project['name']}\"")
 
     def update_issues(self, issues):
         for i, issue in enumerate(issues):
@@ -76,10 +90,12 @@ class Issue:
         self.issue_subject = issue_subject
 
 def main():
-    if len(API_KEY) == 0:
-        raise Exception("Please set the todoist API_KEY within main.py")
+    config = Configuration()
+    todoist = Todoist(config, ignore_closed_todos=True)
 
-    todoist = Todoist(API_KEY, TODOIST_PROJECT_NAME, TODOIST_PROJECT_SECTION_NAME, ignore_closed_todos=True)
+    if '--discover' in sys.argv:
+        todoist.discover()
+        return
 
     with open('issues.json', encoding='utf-8') as issues_file:
         data = json.load(issues_file)

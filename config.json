@@ -1,5 +1,6 @@
 {
-
+  "project_name": "Redmine",
+  "new_section_name": "Backlog",
   "mappings": {
     "tracker": {
       "Anforderung": 1
