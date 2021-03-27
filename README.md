@@ -25,7 +25,7 @@ The behavior can be controlled via the `config.json` file.
 
 Example:
 
-```json
+```
 {
   "project_name": "Redmine", // Project name within Todoist to sync the issues to
   "fallback_section_name": "Backlog", // Section which issues are added to when no section mapping fits
