@@ -13,5 +13,6 @@ class Configuration:
             self.project_name = configuration['project_name']
             self.fallback_section_name = configuration['fallback_section_name']
             self.tracker_mapping = configuration['mappings']['tracker']
+            self.closed_issue_section = configuration['closed_issue_section']
 
 

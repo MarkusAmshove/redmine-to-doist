@@ -1,6 +1,7 @@
 {
   "project_name": "Redmine",
   "fallback_section_name": "Backlog",
+  "closed_issue_section": "Erledigt",
   "mappings": {
     "tracker": {
       "Anforderung": 2156508899,

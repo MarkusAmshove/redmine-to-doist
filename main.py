@@ -3,6 +3,7 @@ import sys
 from config import Configuration
 from todoist.api import TodoistAPI
 import json
+import re
 
 
 class Todoist:
@@ -32,7 +33,7 @@ class Todoist:
             print(f"  {project['id']}: \"{project['name']}\"")
 
     def update_issues(self, issues):
-        for i, issue in enumerate(issues):
+        for issue in issues:
             print(f"Updating issue {issue.issue_id}")
             existing_issue_item = self.__find_issue(issue.issue_id)
             labels = self.__find_labels_for_issue(issue)
@@ -56,6 +57,7 @@ class Todoist:
             if len(self.api.queue) >= 95:
                 self.api.commit()
 
+        self.__move_closed_issues(issues)
         self.api.commit()
 
     def __find_labels_for_issue(self, issue):
@@ -117,6 +119,22 @@ class Todoist:
         if len(matching_closed_items) > 0:
             return self.api.items.get_by_id(matching_closed_items[0]['id'])
         return None
+
+    def __move_closed_issues(self, all_issues):
+        all_items = self.api.projects.get_data(self.project_id)['items']
+        closed_section_id = self.__find_section_id_for_status(self.config.closed_issue_section)
+        for item in all_items:
+            match = re.search('\\[#(\\d+)\\]\\(', item['content'])
+            issue_id = int(match.group(1))
+            open_issues = list(map(lambda i: i.issue_id, all_issues))
+            if issue_id not in open_issues:
+                self.api.items.move(
+                    item['id'],
+                    section_id=closed_section_id
+            )
+
+            if len(self.api.queue) >= 95:
+                self.api.commit()
 
 
 class Issue:
