@@ -33,6 +33,11 @@ class Todoist:
             print(f"  {project['id']}: \"{project['name']}\"")
 
     def update_issues(self, issues):
+        self.__add_and_update_issues(issues)
+        self.__move_closed_issues(issues)
+        self.api.commit()
+
+    def __add_and_update_issues(self, issues):
         for issue in issues:
             print(f"Updating issue {issue.issue_id}")
             existing_issue_item = self.__find_issue(issue.issue_id)
@@ -46,14 +51,9 @@ class Todoist:
                     project_id=self.project_id,
                     section_id=section,
                     labels=labels)
-                print("\tissue added")
+                print('    issue added')
+            self.__commit_changes_if_necessary()
 
-            # Request limit of 100 commands per request
-            if len(self.api.queue) >= 95:
-                self.api.commit()
-
-        self.__move_closed_issues(issues)
-        self.api.commit()
 
     @staticmethod
     def __update_issue(item, section, labels):
@@ -150,8 +150,12 @@ class Todoist:
                     section_id=closed_section_id
             )
 
-            if len(self.api.queue) >= 95:
-                self.api.commit()
+            self.__commit_changes_if_necessary()
+
+    def __commit_changes_if_necessary(self):
+        # Todoist has a request limit of 100 updates per request
+        if len(self.api.queue) >= 95:
+            self.api.commit()
 
 
 class Issue:
@@ -164,7 +168,7 @@ class Issue:
 
 
 def main():
-    config = Configuration()
+    config = Configuration('config.json')
     todoist = Todoist(config, ignore_closed_todos=True)
 
     if '--discover' in sys.argv:
