@@ -81,6 +81,10 @@ class Todoist:
         if mapped_tracker_label_id is not None:
             labels.append(mapped_tracker_label_id)
 
+        mapped_project_id = self.config.project_mapping.get(issue.project_name)
+        if mapped_project_id is not None:
+            labels.append(mapped_project_id)
+
         return labels
 
     def __find_section_id_for_status(self, status_name):
@@ -151,11 +155,12 @@ class Todoist:
 
 
 class Issue:
-    def __init__(self, issue_id, issue_subject, issue_status, issue_tracker):
+    def __init__(self, issue_id, issue_subject, issue_status, issue_tracker, project_name):
         self.issue_id = issue_id
         self.issue_subject = issue_subject
         self.issue_status = issue_status
         self.issue_tracker = issue_tracker
+        self.project_name = project_name
 
 
 def main():
@@ -170,7 +175,7 @@ def main():
         data = json.load(issues_file)
 
         issues = list(map(
-            lambda i: Issue(i['id'], i['subject'], i['status']['name'], i['tracker']['name']),
+            lambda i: Issue(i['id'], i['subject'], i['status']['name'], i['tracker']['name'], i['project']['name']),
             data['issues']))
     todoist.update_issues(issues)
 
