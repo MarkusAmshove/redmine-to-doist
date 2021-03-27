@@ -1,18 +1,13 @@
 {
-  "project_name": "Redmine",
-  "fallback_section_name": "Backlog",
-  "closed_issue_section": "Erledigt",
+  "project_name": "Redmine", // Project name within Todoist to sync the issues to
+  "fallback_section_name": "Backlog", // Section which issues are added to when no section mapping fits
+  "closed_issue_section": "Done", // The section where closed issues (e.g. items which are no longer within the issues.json) are moved to
   "mappings": {
-    "tracker": {
-      "Anforderung": 2156508899,
-      "Fehler": 2156519715
+    "tracker": { // Mapping from issue tracker to todoist label
+      "Feature": 2156508899 // Maps the redmine tracker `Feature` to todoist label with id 2156508899
     },
     "projects": {
-      "DevOps": 2155441501,
-      "Formelmanager": 2155879393,
-      "PoGO": 2155441767,
-      "ECM": 2152480299,
-      "Ausbildung": 2155435982
+      "DevOps": 2155441501 // Maps the redmine project `DevOps` to label with id 2155441501
     }
   }
 }
