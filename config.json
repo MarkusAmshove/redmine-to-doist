@@ -1,9 +1,10 @@
 {
   "project_name": "Redmine",
-  "new_section_name": "Backlog",
+  "fallback_section_name": "Backlog",
   "mappings": {
     "tracker": {
-      "Anforderung": 1
+      "Anforderung": 2156508899,
+      "Fehler": 2156519715
     }
   }
 }

@@ -11,6 +11,7 @@ class Configuration:
         with open('config.json', encoding='utf-8') as config_file:
             configuration = json.load(config_file)
             self.project_name = configuration['project_name']
-            self.new_section_name = configuration['new_section_name']
+            self.fallback_section_name = configuration['fallback_section_name']
+            self.tracker_mapping = configuration['mappings']['tracker']
 
 
