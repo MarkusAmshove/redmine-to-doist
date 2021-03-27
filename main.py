@@ -54,7 +54,6 @@ class Todoist:
                 print('    issue added')
             self.__commit_changes_if_necessary()
 
-
     @staticmethod
     def __update_issue(item, section, labels):
         updated = False
@@ -120,9 +119,10 @@ class Todoist:
     def __find_issue(self, issue_id):
         items = self.api.projects.get_data(self.project_id)['items']
 
-        item_finder = lambda i: f"[#{issue_id}]" in i['content']
+        def has_issue_in_content(item):
+            return f"[#{issue_id}](" in item['content']
 
-        matching_open_items = list(filter(item_finder, items))
+        matching_open_items = list(filter(has_issue_in_content, items))
 
         if len(matching_open_items) > 0:
             return self.api.items.get_by_id(matching_open_items[0]['id'])
@@ -131,7 +131,7 @@ class Todoist:
             return None
 
         matching_closed_items = list(
-            filter(item_finder, self.api.completed.get_all(project_id=self.project_id)['items'])
+            filter(has_issue_in_content, self.api.completed.get_all(project_id=self.project_id)['items'])
         )
         if len(matching_closed_items) > 0:
             return self.api.items.get_by_id(matching_closed_items[0]['id'])
@@ -141,14 +141,14 @@ class Todoist:
         all_items = self.api.projects.get_data(self.project_id)['items']
         closed_section_id = self.__find_section_id_for_status(self.config.closed_issue_section)
         for item in all_items:
-            match = re.search('\\[#(\\d+)\\]\\(', item['content'])
+            match = re.search('\\[#(\\d+)]\\(', item['content'])
             issue_id = int(match.group(1))
             open_issues = list(map(lambda i: i.issue_id, all_issues))
             if issue_id not in open_issues:
                 self.api.items.move(
                     item['id'],
                     section_id=closed_section_id
-            )
+                )
 
             self.__commit_changes_if_necessary()
 
