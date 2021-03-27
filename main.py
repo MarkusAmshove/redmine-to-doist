@@ -39,12 +39,7 @@ class Todoist:
             labels = self.__find_labels_for_issue(issue)
             section = self.__find_section_id_for_status(issue.issue_status)
             if existing_issue_item is not None:
-                existing_issue_item.update(
-                    labels=labels,
-                )
-                existing_issue_item.move(
-                    section_id=section
-                )
+                self.__update_issue(existing_issue_item, section, labels)
             else:
                 self.api.items.add(
                     f"{issue.issue_subject} ([#{issue.issue_id}](https://redmine.ao-intranet/issues/{issue.issue_id}))",
@@ -59,6 +54,24 @@ class Todoist:
 
         self.__move_closed_issues(issues)
         self.api.commit()
+
+    @staticmethod
+    def __update_issue(item, section, labels):
+        updated = False
+        if sorted(labels) != sorted(item['labels']):
+            item.update(
+                labels=labels,
+            )
+            updated = True
+
+        if item['section_id'] != section:
+            item.move(
+                section_id=section
+            )
+            updated = True
+
+        if updated:
+            print('  issue updated')
 
     def __find_labels_for_issue(self, issue):
         tracker_name = issue.issue_tracker
