@@ -1,9 +1,11 @@
-import sys
-
-from config import Configuration
-from todoist.api import TodoistAPI
 import json
 import re
+import sys
+import requests
+
+from todoist.api import TodoistAPI
+
+from config import Configuration
 
 
 class Todoist:
@@ -43,19 +45,21 @@ class Todoist:
             existing_issue_item = self.__find_issue(issue.issue_id)
             labels = self.__find_labels_for_issue(issue)
             section = self.__find_section_id_for_status(issue.issue_status)
+            priority = self.config.priority_mapping.get(issue.priority_name, 1)
             if existing_issue_item is not None:
-                self.__update_issue(existing_issue_item, section, labels)
+                self.__update_issue(existing_issue_item, section, labels, priority)
             else:
                 self.api.items.add(
                     f"{issue.issue_subject} ([#{issue.issue_id}](https://redmine.ao-intranet/issues/{issue.issue_id}))",
                     project_id=self.project_id,
                     section_id=section,
-                    labels=labels)
+                    labels=labels,
+                    priority=priority)
                 print('    issue added')
             self.__commit_changes_if_necessary()
 
     @staticmethod
-    def __update_issue(item, section, labels):
+    def __update_issue(item, section, labels, priority):
         updated = False
         if sorted(labels) != sorted(item['labels']):
             item.update(
@@ -66,6 +70,12 @@ class Todoist:
         if item['section_id'] != section:
             item.move(
                 section_id=section
+            )
+            updated = True
+
+        if item['priority'] != priority:
+            item.update(
+                priority=priority
             )
             updated = True
 
@@ -159,12 +169,13 @@ class Todoist:
 
 
 class Issue:
-    def __init__(self, issue_id, issue_subject, issue_status, issue_tracker, project_name):
+    def __init__(self, issue_id, issue_subject, issue_status, issue_tracker, project_name, priority_name):
         self.issue_id = issue_id
         self.issue_subject = issue_subject
         self.issue_status = issue_status
         self.issue_tracker = issue_tracker
         self.project_name = project_name
+        self.priority_name = priority_name
 
 
 def main():
@@ -179,7 +190,12 @@ def main():
         data = json.load(issues_file)
 
         issues = list(map(
-            lambda i: Issue(i['id'], i['subject'], i['status']['name'], i['tracker']['name'], i['project']['name']),
+            lambda i: Issue(i['id'],
+                            i['subject'],
+                            i['status']['name'],
+                            i['tracker']['name'],
+                            i['project']['name'],
+                            i['priority']['name']),
             data['issues']))
     todoist.update_issues(issues)
 

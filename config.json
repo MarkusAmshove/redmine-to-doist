@@ -3,11 +3,17 @@
   "fallback_section_name": "Backlog", // Section which issues are added to when no section mapping fits
   "closed_issue_section": "Done", // The section where closed issues (e.g. items which are no longer within the issues.json) are moved to
   "mappings": {
-    "tracker": { // Mapping from issue tracker to todoist label
+    "tracker": { // Mapping from issue tracker (name) to todoist label
       "Feature": 2156508899 // Maps the redmine tracker `Feature` to todoist label with id 2156508899
     },
     "projects": {
-      "DevOps": 2155441501 // Maps the redmine project `DevOps` to label with id 2155441501
+      "DevOps": 2155441501 // Maps the redmine project (name) `DevOps` to label with id 2155441501
+    },
+    "priorities": { // Mapping from issue priority (name) to todoist priority
+      "Low": 1,
+      "Normal": 2,
+      "High": 3,
+      "Urgent": 4
     }
   }
 }

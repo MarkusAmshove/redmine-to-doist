@@ -7,6 +7,7 @@ Small tool to synchronize Redmine issues to a todoist project.
 * Synchronize Redmine issues to a specific todoist project
 * Add todoist labels based on Redmine issue tracker
 * Add todoist labels based on Redmine project
+* Map Redmine issue priorities to todoist priority
 * Add items to specific lanes based on issue status
 
 ## Usage

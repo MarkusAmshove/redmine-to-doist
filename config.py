@@ -16,6 +16,7 @@ class Configuration:
             self.tracker_mapping = configuration['mappings']['tracker']
             self.closed_issue_section = configuration['closed_issue_section']
             self.project_mapping = configuration['mappings']['projects']
+            self.priority_mapping = configuration['mappings']['priorities']
 
 
 
