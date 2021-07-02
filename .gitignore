@@ -11,6 +11,8 @@
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
+update.sh
+startServer.sh
 
 # Generated files
 .idea/**/contentModel.xml

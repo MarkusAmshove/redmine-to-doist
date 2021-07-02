@@ -152,6 +152,8 @@ class Todoist:
         closed_section_id = self.__find_section_id_for_status(self.config.closed_issue_section)
         for item in all_items:
             match = re.search('\\[#(\\d+)]\\(', item['content'])
+            if match is None:
+                continue
             issue_id = int(match.group(1))
             open_issues = list(map(lambda i: i.issue_id, all_issues))
             if issue_id not in open_issues:
@@ -176,6 +178,21 @@ class Issue:
         self.issue_tracker = issue_tracker
         self.project_name = project_name
         self.priority_name = priority_name
+
+def update_todoist(config, json_str):
+    data = json.loads(json_str)
+    todoist = Todoist(config, ignore_closed_todos=True)
+
+    issues = list(map(
+        lambda i: Issue(i['id'],
+                        i['subject'],
+                        i['status']['name'],
+                        i['tracker']['name'],
+                        i['project']['name'],
+                        i['priority']['name']),
+        data['issues']))
+
+    todoist.update_issues(issues)
 
 
 def main():

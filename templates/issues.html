@@ -1,0 +1,21 @@
+<title>Issues</title>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<ul>
+    %{ for message in messages %}
+    <li>{{ message[1] }}</li>
+    %{ endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+<form action="" method="post">
+    <div class="input text">
+        {{ form.issues.label }} {{form.issues}}
+    </div>
+
+    <div class="input submit">
+        <input type="submit" value="Submit" />
+    </div>
+</form>
