@@ -2,3 +2,4 @@ todoist-python
 python-redmine
 Flask
 wtforms
+gunicorn

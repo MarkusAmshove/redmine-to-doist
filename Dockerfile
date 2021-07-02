@@ -7,6 +7,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 ENV TODOIST_API_KEY=
 
-ENTRYPOINT ["python3"]
-CMD ["/opt/redmine-to-doist/server.py"]
+ENTRYPOINT ["gunicorn"]
+CMD ["-w", "4", "-b", "0.0.0.0:5000", "wsgi:app"]
 
