@@ -3,3 +3,4 @@ python-redmine
 Flask
 wtforms
 gunicorn
+Flask-BasicAuth

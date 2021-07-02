@@ -1,5 +1,6 @@
 from flask import Flask, render_template, flash, request
-from wtforms import Form, TextField, TextAreaField, validators, StringField, SubmitField
+from wtforms import Form, TextField, validators
+from flask_basicauth import BasicAuth
 from config import Configuration
 from main import update_todoist
 import os
@@ -12,11 +13,16 @@ config = Configuration('config.json')
 app = Flask("td")
 app.config.from_object(__name__)
 app.config['SECRET_KEY'] = secret_key
+app.config['BASIC_AUTH_USERNAME'] = os.environ['BASIC_AUTH_USERNAME']
+app.config['BASIC_AUTH_PASSWORD'] = os.environ['BASIC_AUTH_PASSWORD']
+
+basic_auth = BasicAuth(app)
 
 class IssuesJsonForm(Form):
     issues = TextField('Issues:', validators=[validators.required()])
 
 @app.route("/", methods=['GET', 'POST'])
+@basic_auth.required
 def issues_form():
     form = IssuesJsonForm(request.form)
 
