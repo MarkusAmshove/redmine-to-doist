@@ -45,24 +45,29 @@ class Todoist:
             existing_issue_item = self.__find_issue(issue.issue_id)
             labels = self.__find_labels_for_issue(issue)
             section = self.__find_section_id_for_status(issue.issue_status)
+            closed_section_id = self.__find_section_id_for_status(self.config.closed_issue_section)
             priority = self.config.priority_mapping.get(issue.priority_name, 1)
             if existing_issue_item is not None:
-                self.__update_issue(existing_issue_item, section, labels, priority)
+                self.__update_issue(existing_issue_item, section, labels, priority, closed_section_id)
             else:
                 self.api.items.add(
                     f"{issue.issue_subject} ([#{issue.issue_id}](https://redmine.ao-intranet/issues/{issue.issue_id}))",
                     project_id=self.project_id,
                     section_id=section,
                     labels=labels,
+                    due=self.__create_due_today() if section == closed_section_id else None,
                     priority=priority)
                 print('    issue added')
             self.__commit_changes_if_necessary()
 
-    @staticmethod
-    def __update_issue(item, section, labels, priority):
+    def __create_due_today(self):
+        return {"string": "today", "lang": "en"}
+
     def __commit(self):
         print("Committing changes")
         self.api.commit()
+
+    def __update_issue(self, item, section, labels, priority, closed_issue_section_id):
         updated = False
         if sorted(labels) != sorted(item['labels']):
             item.update(
@@ -79,6 +84,12 @@ class Todoist:
         if item['priority'] != priority:
             item.update(
                 priority=priority
+            )
+            updated = True
+
+        if item['section_id'] == closed_issue_section_id:
+            item.update(
+                due=self.__create_due_today()
             )
             updated = True
 
@@ -163,6 +174,10 @@ class Todoist:
                 self.api.items.move(
                     item['id'],
                     section_id=closed_section_id
+                )
+                self.api.items.update(
+                    item['id'],
+                    due=self.__create_due_today()
                 )
 
             self.__commit_changes_if_necessary()
