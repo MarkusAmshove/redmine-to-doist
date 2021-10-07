@@ -37,7 +37,7 @@ class Todoist:
     def update_issues(self, issues):
         self.__add_and_update_issues(issues)
         self.__move_closed_issues(issues)
-        self.api.commit()
+        self.__commit()
 
     def __add_and_update_issues(self, issues):
         for issue in issues:
@@ -60,6 +60,9 @@ class Todoist:
 
     @staticmethod
     def __update_issue(item, section, labels, priority):
+    def __commit(self):
+        print("Committing changes")
+        self.api.commit()
         updated = False
         if sorted(labels) != sorted(item['labels']):
             item.update(
@@ -167,7 +170,7 @@ class Todoist:
     def __commit_changes_if_necessary(self):
         # Todoist has a request limit of 100 updates per request
         if len(self.api.queue) >= 95:
-            self.api.commit()
+            self.__commit()
 
 
 class Issue:
