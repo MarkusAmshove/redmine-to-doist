@@ -1,0 +1,4 @@
+*.tar
+venv
+.git
+__pycache__
