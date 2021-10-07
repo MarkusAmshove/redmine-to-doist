@@ -10,5 +10,5 @@ ENV BASIC_AUTH_USERNAME=test
 ENV BASIC_AUTH_PASSWORD=test
 
 ENTRYPOINT ["gunicorn"]
-CMD ["-w", "4", "-b", "0.0.0.0:5000", "wsgi:app"]
+CMD ["-w", "4", "--timeout", "120", "-b", "0.0.0.0:5000", "wsgi:app"]
 
