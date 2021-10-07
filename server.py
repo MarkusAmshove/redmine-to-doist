@@ -28,7 +28,6 @@ def issues_form():
 
     if request.method == 'POST' and form.validate():
         issues = form.issues.data
-        print(issues)
         update_todoist(config, issues)
 
         return "Updated"
